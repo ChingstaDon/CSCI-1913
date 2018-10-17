@@ -205,5 +205,5 @@ class Mumble():
         while(count > 0):
             word = self.make(max)
             if(len(word) >= min):
-                print(count, len(word), word)
+                print(word)
                 count -= 1
