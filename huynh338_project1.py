@@ -205,5 +205,10 @@ class Mumble():
         while(count > 0):
             word = self.make(max)
             if(len(word) >= min):
-                print(count, len(word), word)
+                #print(count, len(word), word)
+                print(word)
                 count -= 1
+
+#test
+mumbler = Mumble(101, choosers)
+mumbler.test(50, 5, 10)
