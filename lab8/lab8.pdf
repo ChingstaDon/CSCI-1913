@@ -1,0 +1,451 @@
+<!-- Created by Bracy 0.4 on Monday, October 29, 2018 at 1:05 PM CDT -->
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>
+   CSci 1913 Programming Laboratory 8
+  </title>
+  <style>
+   a:active
+    { color: purple;
+      font-weight: bold;
+      text-decoration: none }
+   a:link
+    { color: blue;
+      font-weight: bold;
+      text-decoration: none }
+   a:visited
+    { color: purple;
+      font-weight: bold;
+      text-decoration: none }
+   hr
+    { background-color: black; 
+      border: none;
+      color: black;
+      height: 1px }
+   table
+    { border-collapse: collapse }
+  </style>
+ </head>
+ <body bgcolor="#FFFFFF">
+  <p align="center">
+   <b>Programming Laboratory 8</b>
+   <br>
+   <b>CS<small>CI</small> 1913: Introduction to Algorithms,</b>
+   <br>
+   <b>Data Structures, and Program Development</b>
+   <br>
+   <b>October 30–31, 2018</b>
+  </p>
+  <p>
+   <b>0. Introduction.</b>
+  </p>
+  <p align="justify">
+   In this assignment you will implement a stack as a Java class, using a
+   linked list of nodes. Unlike the stack discussed in the lectures, however,
+   your stack will be designed to efficiently handle repeated pushes of the
+   same element. This shows that there are often many different ways to design
+   the same data structure, and that a data structure should be designed for an
+   anticipated pattern of use.
+  </p>
+  <p>
+   <b>1. Theory.</b>
+  </p>
+  <p align="justify">
+   The most obvious way to represent a sequence of objects is simply to list
+   them, one after the other, like this.
+  </p>
+  <blockquote>
+   <table cellspacing="0" cellpadding="0">
+    <tbody><tr valign="top">
+     <td>
+      <p>
+       <i>a</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>a</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>b</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>b</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>b</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>c</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>a</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>a</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>d</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>d</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>d</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>d</i>&nbsp;&nbsp;
+      </p>
+     </td>
+    </tr>
+   </tbody></table>
+  </blockquote>
+  <p align="justify">
+   Note that the same objects often appear many times in a row. This is called
+   a <i>run</i> of those objects. In the example sequence, there is a run
+   of 2 <i>a</i>’s, a run of 3 <i>b</i>’s, a run of 1
+   <i>c</i>, a run of 2 <i>a</i>’s, and a run of 4
+   <i>d</i>’s. You can represent a sequence with runs by listing its
+   objects, along with the number of times each object appears. For example,
+   you can represent the sequence shown above like this.
+  </p>
+  <blockquote>
+   <table cellspacing="0" cellpadding="0">
+    <tbody><tr valign="top">
+     <td>
+      <p>
+       <i>a</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>b</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>c</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>a</i>&nbsp;&nbsp;
+      </p>
+     </td>
+     <td>
+      <p>
+       <i>d</i>&nbsp;&nbsp;
+      </p>
+     </td>
+    </tr>
+    <tr valign="top">
+     <td>
+      <p>
+       2
+      </p>
+     </td>
+     <td>
+      <p>
+       3
+      </p>
+     </td>
+     <td>
+      <p>
+       1
+      </p>
+     </td>
+     <td>
+      <p>
+       2
+      </p>
+     </td>
+     <td>
+      <p>
+       4
+      </p>
+     </td>
+    </tr>
+   </tbody></table>
+  </blockquote>
+  <p align="justify">
+   Representing a sequence in this way is called <i>run-length
+   encoding.</i> If a sequence has long runs, or many runs, then run-length
+   encoding will represent it more efficiently than simply listing its objects.
+   However, if a sequence has short runs, or few runs, then run-length encoding
+   may represent it <i>less</i> efficiently, because extra space is needed
+   to store the lengths of the runs.
+   <br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Since a stack is just a simple kind of
+   sequence, you can use run-length encoding to implement it. In this
+   assignment, you will write a Java class called <tt>RunnyStack</tt> that
+   implements a stack which uses run-length encoding. Here are some examples of
+   how it works. Suppose you push an object <i>a</i> on an empty
+   <tt>RunnyStack</tt>. Then the stack will look like this, with a run of
+   1 <i>a</i>.
+  </p>
+  <blockquote>
+   <table cellspacing="0" cellpadding="0">
+    <tbody><tr valign="top">
+     <td>
+      <p>
+       <i>a</i>&nbsp;1
+      </p>
+     </td>
+    </tr>
+   </tbody></table>
+  </blockquote>
+  <p align="justify">
+   Now suppose you push <i>b</i>. The stack now looks like this, with a
+   run of 1 <i>b</i>, and a run of 1 <i>a.</i>
+  </p>
+  <blockquote>
+   <table cellspacing="0" cellpadding="0">
+    <tbody><tr valign="top">
+     <td>
+      <p>
+       <i>b</i>&nbsp;1
+      </p>
+     </td>
+    </tr>
+    <tr valign="top">
+     <td>
+      <p>
+       <i>a</i>&nbsp;1
+      </p>
+     </td>
+    </tr>
+   </tbody></table>
+  </blockquote>
+  <p align="justify">
+   If you push another <i>b</i> on the <tt>RunnyStack</tt>, then the
+   length of the run on top of the stack is incremented, so the stack looks
+   like this.
+  </p>
+  <blockquote>
+   <table cellspacing="0" cellpadding="0">
+    <tbody><tr valign="top">
+     <td>
+      <p>
+       <i>b</i>&nbsp;2
+      </p>
+     </td>
+    </tr>
+    <tr valign="top">
+     <td>
+      <p>
+       <i>a</i>&nbsp;1
+      </p>
+     </td>
+    </tr>
+   </tbody></table>
+  </blockquote>
+  <p align="justify">
+   If you push yet another <i>b</i>, then the length of the run at the top
+   of the stack would increase to 3. However, suppose that you pop the
+   <tt>RunnyStack</tt> instead. Then the length of the run at the top is
+   decremented, so that the stack looks like this.
+  </p>
+  <blockquote>
+   <table cellspacing="0" cellpadding="0">
+    <tbody><tr valign="top">
+     <td>
+      <p>
+       <i>b</i>&nbsp;1
+      </p>
+     </td>
+    </tr>
+    <tr valign="top">
+     <td>
+      <p>
+       <i>a</i>&nbsp;1
+      </p>
+     </td>
+    </tr>
+   </tbody></table>
+  </blockquote>
+  <p align="justify">
+   If you pop the <tt>RunnyStack</tt> one more time, then the length of
+   the run on top of the stack is decremented to 0. However, a run of 0 objects
+   is like no run at all, so it vanishes, and the stack looks as it did after
+   the first push.
+  </p>
+  <blockquote>
+   <table cellspacing="0" cellpadding="0">
+    <tbody><tr valign="top">
+     <td>
+      <p>
+       <i>a</i>&nbsp;1
+      </p>
+     </td>
+    </tr>
+   </tbody></table>
+  </blockquote>
+  <p align="justify">
+   Stacks with run-length encoding are used internally by some compilers and
+   interpreters, because they often push the same objects over and over again.
+  </p>
+  <p>
+   <b>2. Implementation.</b>
+  </p>
+  <p align="justify">
+   You must write a class called <tt>RunnyStack</tt> that represents a
+   stack. Your class must implement run-length encoding, as described
+   previously. It must also hold objects of type <tt>Base</tt>, so it will
+   look like this.
+  </p>
+  <blockquote>
+   <p>
+    <tt>class&nbsp;RunnyStack&lt;Base&gt;&nbsp;</tt>
+    <br>
+    <tt>{&nbsp;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;⋮&nbsp;</tt>
+    <br>
+    <tt>}</tt>
+   </p>
+  </blockquote>
+  <p align="justify">
+   Your class must define at least the following methods, as described below.
+   To simplify grading, your methods must have the same names as the ones shown
+   here.
+  </p>
+  <ul>
+   <li>
+   <p>
+    <tt>public RunnyStack()</tt>
+   </p>
+   <p align="justify">
+    Constructor. Make a new, empty instance of <tt>RunnyStack</tt>.
+   </p>
+   </li><li>
+   <p>
+    <tt>public int depth()</tt>
+   </p>
+   <p align="justify">
+    Return the depth of the stack: the sum of the lengths of all the runs it
+    holds. This is not necessarily the same as the number of runs it holds,
+    which is returned by the method <tt>runs</tt>.
+   </p>
+   </li><li>
+   <p>
+    <tt>public boolean isEmpty()</tt>
+   </p>
+   <p align="justify">
+    Test if the stack is empty.
+   </p>
+   </li><li>
+   <p>
+    <tt>public Base peek()</tt>
+   </p>
+   <p align="justify">
+    If the stack is empty, then throw an <tt>IllegalStateException</tt>.
+    Otherwise, return the <tt>Base</tt> at the top of the stack.
+   </p>
+   </li><li>
+   <p>
+    <tt>public void pop()</tt>
+   </p>
+   <p align="justify">
+    If the stack is empty, then throw an <tt>IllegalStateException</tt>.
+    Otherwise, decrement the length of the run on top of the stack. If this
+    leaves a run of zero <tt>Base</tt>’s on top of the stack, then
+    remove that run.
+   </p>
+   </li><li>
+   <p>
+    <tt>public void push(Base base)</tt>
+   </p>
+   <p align="justify">
+    If the stack is empty, then add a new run of one <tt>Base</tt> at the
+    top of the stack. If the stack is not empty, then test if
+    <tt>base</tt> is equal to the object in the run at the top of the
+    stack. If it is, then increment the length of that run. If it isn’t,
+    then add a new run of one <tt>base</tt> at the top of the stack. Note
+    that <tt>base</tt> may be <tt>null</tt>.
+   </p>
+   </li><li>
+   <p>
+    <tt>public int runs()</tt>
+   </p>
+   <p align="justify">
+    Return the number of runs in the stack. This is not necessarily the same as
+    its depth, which is returned by the method <tt>depth</tt>.
+   </p>
+  </li></ul>
+  <p align="justify">
+   Here are some hints, requirements, and warnings. First, all these methods
+   must work using <i>O</i>(1) operations, so they are not allowed to use
+   loops or recursions. <i>You will receive no points for this assignment if
+   you use loops or recursions in any way!</i>
+   <br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Second, your <tt>RunnyStack</tt> class
+   must have a private nested class called <tt>Run</tt>. You must use
+   instances of <tt>Run</tt> to implement your stack. Each instance of
+   <tt>Run</tt> represents a run of <tt>Base</tt>’s. <i>You
+   will receive no points for this assignment if you use arrays in any
+   way!</i> The class <tt>Run</tt> must have three private slots that
+   have the following names and types. The slot <tt>base</tt> points to
+   the <tt>Base</tt> that appears in the run. The slot
+   <tt>length</tt> is an <tt>int</tt> that is the length of the run.
+   The slot <tt>next</tt> points to the instance of <tt>Run</tt> that
+   is immediately below this one on the stack, or to <tt>null</tt>. It
+   must also have a private constructor that initializes these slots.
+   <br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Third, your <tt>push</tt> method must
+   test non-<tt>null Base</tt>’s for equality using their
+   <tt>equals</tt> methods. It must use the Java
+   ‘<tt>==</tt>’ operator only for testing <tt>null
+   Base</tt>’s. It is helpful to define an extra private method called
+   <tt>isEqual</tt> that takes two <tt>Base</tt>’s as
+   arguments, and tests if they are equal. If either <tt>Base</tt> is
+   <tt>null</tt>, then <tt>isEqual</tt> uses
+   ‘<tt>==</tt>’. If neither <tt>Base</tt> is
+   <tt>null</tt>, then <tt>isEqual</tt> uses <tt>equals</tt>.
+   <br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Fourth, <tt>RunnyStack</tt>’s
+   methods are not allowed to print things. If you were writing
+   <tt>RunnyStack</tt> in the Real World, then it might be part of some
+   larger program. You don’t know if that larger program should print
+   things.
+  </p>
+  <p>
+   <b>3. Deliverables.</b>
+  </p>
+  <p align="justify">
+   The file
+   <a href="https://ay17.moodle.umn.edu/pluginfile.php/2875131/mod_resource/content/1/tests.java">
+    <tt>tests.java</tt>
+   </a>
+   contains Java code that performs a series of tests. Run the tests, then turn
+   in the Java source code for the class <tt>RunnyStack</tt> in the usual
+   way. Your lab TA will tell you where and how to turn it in. If your lab is
+   on <b>Tuesday, October 30, 2018,</b> then your work must be turned in
+   by <b>11:55 <small>PM</small></b> on <b>Tuesday, November
+   6.</b> If your lab is on <b>Wednesday, October 31, 2018,</b> then
+   your work must be turned in by <b>11:55 <small>PM</small></b> on
+   <b>Wednesday, November 7.</b> <i>To avoid late penalties, do not
+   confuse these dates!</i>
+  </p>
+ 
+
+</body></html>
