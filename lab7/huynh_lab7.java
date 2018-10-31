@@ -5,22 +5,24 @@ class Map<Key, Value>
 {
 	private Key[] keys;
 	private Value[] values;
-
+	private int count = 0;
+	
 	public Map(int length)
 	{
 		if(length < 0)
 		{
-			throw new RuntimeException();
+			throw new IllegalArgumentException();
 		}
 		else
 		{
-			Map[] map = (Map[]) new Object[length];
+			keys = (Key[]) new Object[length];
+			values = (Value[]) new Object[length];
 		}
 	}
 
 	public Value get(Key key)
 	{
-		for(int i = 0; i < keys.length; i++)
+		for(int i = 0; i < count; i++)
 		{
 			if(isEqual(key, keys[i]))
 			{
@@ -38,13 +40,19 @@ class Map<Key, Value>
 			{
 				return true;
 			}
+			else
+			{
+				return false;
+			}
 		}
+		
 		return leftKey.equals(rightKey);
+		
 	}
 
 	public boolean isIn(Key key)
 	{
-		for(int i = 0; i < keys.length; i++)
+		for(int i = 0; i < count; i++)
 		{
 			if(isEqual(key, keys[i]))
 			{
@@ -56,19 +64,28 @@ class Map<Key, Value>
 
 	public void put(Key key, Value value)
 	{
-		if(where(key) >= 0)
+		if(isIn(key))
 		{
 			values[where(key)] = value;
 		}
 		else
 		{
-			throw new IllegalStateException();
-		}
+			if(count < keys.length)
+			{
+				keys[count] = key;
+				values[count] = value;
+				count ++;
+			}
+			else
+			{
+				throw new IllegalStateException();
+			}
+		}	
 	}
 
 	private int where(Key key)
 	{
-		for(int i = 0; i < keys.length; i++)
+		for(int i = 0; i < count; i++)
 		{
 			if(isEqual(key, keys[i]))
 			{
