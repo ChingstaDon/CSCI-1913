@@ -33,15 +33,15 @@ class PriorityQueue<Base>
     {
       Node above = root;
       Node below = root.left;
-      while(below != null)
+      while(below.left != null)
       {
         above = below;
         below = below.left;
       }
-      Base goner = below.object;
+      //Base goner = below.object;
       above.left = below.right;
 
-      return goner;
+      return below.object;
     }
   }
 
