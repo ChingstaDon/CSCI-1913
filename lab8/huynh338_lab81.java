@@ -5,17 +5,16 @@ class RunnyStack<Base>
 {
 
 	private int count;
-	private int run;
 	private class Run
 	{
-		private Base base;
+		private Base value;
 		private Run next;
-		private int length = 0;
-		private Run(Base base, Run next)
+		private int run = 0;
+		private Run(Base value, Run next)
 		{
-			this.base = base;
+			this.value = value;
 			this.next = next;
-			length += 1;
+			run += 1;
 		}
 	}
 	private Run top;
@@ -24,7 +23,6 @@ class RunnyStack<Base>
 	{
 		top = null;
 		count = 0;
-		run = 0;
 	}
 
 	public int depth()
@@ -44,7 +42,7 @@ class RunnyStack<Base>
 		}
 		else
 		{
-			return top.base;
+			return top.value;
 		}
 	}
 
@@ -57,13 +55,12 @@ class RunnyStack<Base>
 		else
 		{
 			count -= 1;
-			if(top.length > 1)
+			if(top.run > 1)
 			{
-				top.length -= 1;
+				top.run -= 1;
 			}
 			else
 			{
-				run -= 1;
 				top = top.next;
 			}
 		}
@@ -72,13 +69,12 @@ class RunnyStack<Base>
 	public void push(Base base)
 	{
 		count += 1;
-		if(top != null && top.base == base)
+		if(top != null && top.value == base)
 		{
-			top.length += 1;
+			top.run += 1;
 		}
 		else
 		{
-			run += 1;
 			top = new Run(base, top);
 		}
 	}
@@ -89,7 +85,7 @@ class RunnyStack<Base>
 		{
 			return 0;
 		}
-		return run;
+		return top.run;
 	}
 }
 
