@@ -52,10 +52,10 @@ class ShuffleTree<Value>
       int j = Math.abs(generator.nextInt()) % (count - i);
       String tempK = keys[i];
       Value tempV = values[i];
-      keys[i] = keys[j];
-      keys[j] = tempK;
-      values[i] = values[j];
-      values[j] = tempV;
+      keys[i] = keys[i+j];
+      keys[i+j] = tempK;
+      values[i] = values[i+j];
+      values[i+j] = tempV;
     }
 
     //Node temp = root;
@@ -64,7 +64,7 @@ class ShuffleTree<Value>
       //System.out.println("Growing Tree");
       if(this.isEmpty())
       {
-        System.out.printf("Root, Assigning Key: %s to Value: %d\n", keys[i], values[i]);
+        //System.out.printf("Root, Assigning Key: %s to Value: %d\n", keys[i], values[i]);
         root = new Node(keys[i], values[i]);
       }
       else
@@ -79,12 +79,13 @@ class ShuffleTree<Value>
           {
             if(temp.left == null)
             {
-              System.out.printf("Left, Assigning Key: %s to Value: %d\n", keys[i], values[i]);
+              //System.out.printf("Left, Assigning Key: %s to Value: %d\n", keys[i], values[i]);
               temp.left = new Node(keys[i], values[i]);
               break;
             }
             else
             {
+              //System.out.println("left, flush");
               temp = temp.left;
             }
           }
@@ -92,12 +93,13 @@ class ShuffleTree<Value>
           {
             if(temp.right == null)
             {
-              System.out.printf("Right, Assigning Key: %s to Value: %d\n", keys[i], values[i]);
+              //System.out.printf("Right, Assigning Key: %s to Value: %d\n", keys[i], values[i]);
               temp.right = new Node(keys[i], values[i]);
               break;
             }
             else
             {
+              //System.out.println("right, flush");
               temp = temp.right;
             }
           }
@@ -114,30 +116,55 @@ class ShuffleTree<Value>
 
   public Value get(String key)
   {
-    //System.out.println(count);
     if(count != 0)
     {
       this.flush();
       count = 0;
     }
-    Node temp = root;
-    while(temp != null)
+    Node subtree = root;
+    while(subtree != null)
     {
-      int test = key.compareTo(temp.key);
+      int test = key.compareTo(subtree.key);
       if(test < 0)
       {
-        temp = temp.left;
+        subtree = subtree.left;
       }
-      if(test > 0)
+      else if(test > 0)
       {
-        temp = temp.right;
+        subtree = subtree.right;
       }
       else
       {
-        return temp.value;
+        return subtree.value;
       }
     }
-    throw new IllegalArgumentException("Key not found!");
+    throw new IllegalArgumentException("No such key.");
+  }
+
+  public int height()
+  {
+    return heighting(root);
+  }
+
+  private int heighting(Node root)
+  {
+    if(root == null)
+    {
+      return 0;
+    }
+    else
+    {
+      int left = heighting(root.left);
+      int right = heighting(root.right);
+      if(left > right)
+      {
+        return left + 1;
+      }
+      else
+      {
+        return right + 1;
+      }
+    }
   }
 
   public void put(String key, Value value)
@@ -193,17 +220,26 @@ class ShuffleBored
 
     for (int index = 0; index < reserved.length; index += 1)
     {
-      System.out.printf("%s %02d\n", reserved[index], index);
+      //System.out.printf("%s %02d\n", reserved[index], index);
       tree.put(reserved[index], index);
     }
-    System.out.println(tree.isEmpty());
-    System.out.println("Hello");
-    System.out.format("%02d %s", tree.get("lemon"), "assert");
-    System.out.println();
-    // for (int index = 0; index < reserved.length; index += 1)
-    // {
-    //   System.out.format("%02d %s", tree.get(reserved[index]), reserved[index]);
-    //   System.out.println();
-    // }
+
+    System.out.println(tree.height());
+
+    for (int index = 0; index < reserved.length; index += 1)
+    {
+      System.out.format("%02d %s", tree.get(reserved[index]), reserved[index]);
+      System.out.println();
+    }
+
+    try
+    {
+      System.out.println(tree.get("friend"));
+    }
+    catch(IllegalArgumentException ignore)
+    {
+      System.out.println("No friend here...");
+    }
+
   }
 }
